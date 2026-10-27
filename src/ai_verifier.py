@@ -1,3 +1,4 @@
+import itertools
 import os
 
 from dotenv import load_dotenv
@@ -5,7 +6,13 @@ from google import genai
 
 
 load_dotenv()
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+raw_keys = os.getenv("GEMINI_API_KEY", "")
+api_keys = [key.strip() for key in raw_keys.split(",") if key.strip()]
+
+if not api_keys:
+    raise ValueError("GEMINI_API_KEY nahi mili! Barahe karam secret check karein.")
+
+key_pool = itertools.cycle(api_keys)
 
 
 def verify_with_gemini(pil_image, raw_ocr_text):
@@ -24,6 +31,7 @@ Kaam:
 -------------------
 """
 
+    client = genai.Client(api_key=next(key_pool))
     response = client.models.generate_content(
         model="gemini-2.5-flash-lite",
         contents=[pil_image, prompt],
