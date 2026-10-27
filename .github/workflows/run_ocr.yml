@@ -27,6 +27,18 @@ jobs:
           path: ~/.EasyOCR
           key: ${{ runner.os }}-easyocr-ur
 
+      - name: Pre-download EasyOCR Models
+        run: |
+          mkdir -p ~/.EasyOCR/model
+          if [ ! -f ~/.EasyOCR/model/craft_mlt_25k.pth ]; then
+            wget -c --tries=5 --timeout=30 -O ~/.EasyOCR/model/craft_mlt_25k.zip https://github.com/JaidedAI/EasyOCR/releases/download/pre-v1.1.6/craft_mlt_25k.zip
+            unzip -o -q ~/.EasyOCR/model/craft_mlt_25k.zip -d ~/.EasyOCR/model/
+          fi
+          if [ ! -f ~/.EasyOCR/model/arabic.pth ]; then
+            wget -c --tries=5 --timeout=30 -O ~/.EasyOCR/model/arabic.zip https://github.com/JaidedAI/EasyOCR/releases/download/pre-v1.1.6/arabic.zip
+            unzip -o -q ~/.EasyOCR/model/arabic.zip -d ~/.EasyOCR/model/
+          fi
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
