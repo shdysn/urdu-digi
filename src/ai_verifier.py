@@ -7,10 +7,22 @@ from google import genai
 
 load_dotenv()
 raw_keys = os.getenv("GEMINI_API_KEY", "")
-api_keys = [key.strip() for key in raw_keys.split(",") if key.strip()]
+api_keys = []
+
+for key in raw_keys.replace("\n", ",").replace(";", ",").split(","):
+    cleaned_key = key.strip().strip("'\"")
+    if "GEMINI_API_KEY=" in cleaned_key:
+        cleaned_key = cleaned_key.split("GEMINI_API_KEY=", 1)[-1].strip().strip("'\"")
+    if cleaned_key:
+        api_keys.append(cleaned_key)
 
 if not api_keys:
-    raise ValueError("GEMINI_API_KEY nahi mili! Barahe karam secret check karein.")
+    raise ValueError("Koi valid GEMINI_API_KEY nahi mili! GitHub Secrets check karein.")
+
+print(f"Total {len(api_keys)} API keys detect hui hain.")
+for index, key in enumerate(api_keys, start=1):
+    masked_key = "*" * min(len(key), 8)
+    print(f"Key {index}: {masked_key} (total length: {len(key)})")
 
 key_pool = itertools.cycle(api_keys)
 
