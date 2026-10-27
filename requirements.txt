@@ -1,0 +1,5 @@
+google-genai
+easyocr
+pillow
+pymupdf
+python-dotenv
